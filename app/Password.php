@@ -17,6 +17,7 @@ class Password extends Model
         $password = new Password();
         $password->title = $request->title;
         $password->password = $request->password;
+        $password->id_category = $category->id;
         $password->save();
     }
 }

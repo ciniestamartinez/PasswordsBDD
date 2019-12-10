@@ -6,6 +6,17 @@ use Illuminate\Http\Request;
 
 class PasswordController extends Controller
 {
+    public function store(Request $request)
+    {
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+
+        $password = new Password;
+        $password->create($request, $user);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -32,10 +43,7 @@ class PasswordController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
-    }
+    
 
     /**
      * Display the specified resource.
@@ -45,7 +53,15 @@ class PasswordController extends Controller
      */
     public function show($id)
     {
-        //
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+
+        $passwords = Password::all();
+        foreach ($passwords as $key => $password){
+            print($password);
+        }
     }
 
     /**
@@ -68,7 +84,15 @@ class PasswordController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+
+        $password = Password::find($id);
+        $password->title = $request->title;
+        $password->password = $request->password;
+        $user->save();
     }
 
     /**
@@ -79,6 +103,12 @@ class PasswordController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+        
+        $password = Password::find($id);
+        $password -> destroy();
     }
 }
