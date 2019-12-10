@@ -37,6 +37,13 @@ class CategoryController extends Controller
         }   
     }
 
+    public function getCategories(){
+        $categories = Category::all();
+        foreach ($categories as $key => $category){
+            print($category);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -74,7 +81,7 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        
     }
 
     /**

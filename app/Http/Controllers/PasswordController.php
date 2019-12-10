@@ -1,15 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Helpers\Token;
-use App\Password;
-use App\User;
-use App\Category;
 
 use Illuminate\Http\Request;
 
 class PasswordController extends Controller
 {
+    public function store(Request $request)
+    {
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+
+        $password = new Password;
+        $password->create($request, $user);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -36,27 +43,7 @@ class PasswordController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $token_header = $request->header('Authorization');
-        $token = new Token();
-        $data = $token->decode($token_header);
-        $user = User::where('email',$data->email)->first();
-
-        $category = Category::where('name', $request->name)->where('id_user', $user->id)->first();
-        
-        if(isset($category)){
-            $newPassword = new Password();
-            $newPassword->create($request, $category);
-            return response()->json([
-                "Token válido" => "Contraseña creada"
-            ],200);
-        }else{
-            return response()->json([
-                "Token no válido" => "Contraseña no creada"
-            ],401);
-        }
-    }
+    
 
     /**
      * Display the specified resource.
@@ -64,7 +51,7 @@ class PasswordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id)
+    public function show($id)
     {
         $token_header = $request->header('Authorization');
         $token = new Token();
@@ -72,10 +59,9 @@ class PasswordController extends Controller
         $user = User::where('email',$data->email)->first();
 
         $passwords = Password::all();
-        return response()->json([
-            "contraseñas" => $passwords
-        ]);
-        
+        foreach ($passwords as $key => $password){
+            print($password);
+        }
     }
 
     /**
@@ -115,7 +101,7 @@ class PasswordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
         $token_header = $request->header('Authorization');
         $token = new Token();
