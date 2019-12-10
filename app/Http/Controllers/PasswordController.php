@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Helpers\Token;
+use App\Password;
+use App\User;
+use App\Category;
 
 use Illuminate\Http\Request;
 
@@ -34,7 +38,24 @@ class PasswordController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+
+        $category = Category::where('name', $request->name)->where('id_user', $user->id)->first();
+        
+        if(isset($category)){
+            $newPassword = new Password();
+            $newPassword->create($request, $category);
+            return response()->json([
+                "Token válido" => "Contraseña creada"
+            ],200);
+        }else{
+            return response()->json([
+                "Token no válido" => "Contraseña no creada"
+            ],401);
+        }
     }
 
     /**
@@ -43,9 +64,18 @@ class PasswordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+
+        $passwords = Password::all();
+        return response()->json([
+            "contraseñas" => $passwords
+        ]);
+        
     }
 
     /**
@@ -68,7 +98,15 @@ class PasswordController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+
+        $password = Password::find($id);
+        $password->title = $request->title;
+        $password->password = $request->password;
+        $user->save();
     }
 
     /**
@@ -77,8 +115,14 @@ class PasswordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+        
+        $password = Password::find($id);
+        $password -> destroy();
     }
 }

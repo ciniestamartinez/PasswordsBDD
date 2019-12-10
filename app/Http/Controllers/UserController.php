@@ -18,12 +18,8 @@ class UserController extends Controller
         $user->create($request); 
         var_dump('añadido');
 
-        $data_token = [
-            "email" => $user->email
-        ]; 
-
-        $token = new Token(['email'-> $user->email]);
-        $tokenEncode = $token->encode($data_token);
+        $token = new Token($user->email);
+        $tokenEncode = $token->encode();
         
         return response()->json([
             "token" => $tokenEncode

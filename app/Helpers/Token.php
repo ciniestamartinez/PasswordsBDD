@@ -8,7 +8,7 @@ class Token{
     private $algorithm;
 
     public function __construct($data = null){
-        $this->key = 'bnjifg_bhidsj.ijnJ#HBIJFBIJSDHGJNMQE_4687fgd768bh#'; 
+        $this->key = 'nmgchmhfgxmgcg?xgkjmchxm´hxmcnjxjntucy'; 
         $this->data = $data;
         $this->algorithm = array('HS256');
     }

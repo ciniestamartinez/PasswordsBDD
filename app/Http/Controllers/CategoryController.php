@@ -21,8 +21,20 @@ class CategoryController extends Controller
         $data = $token->decode($token_header);
         $user = User::where('email',$data->email)->first();
 
-        $category = new Category;
-        $category->create($request, $user);
+        $category = Category::where('name', $request->name)->first();
+
+        if($category == null){
+            $newCategory = new Category();
+            $newCategory->create($request, $user);
+    
+            return response()->json([
+                "Token válido" => "Categoría creada"
+            ],200);
+        }else{
+            return response()->json([
+                "Token no válido" => "Categoría no creada"
+            ],401);
+        }   
     }
 
     /**
@@ -41,9 +53,17 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        $token_header = $request->header('Authorization');
+        $token = new Token();
+        $data = $token->decode($token_header);
+        $user = User::where('email',$data->email)->first();
+
+        $categories = Category::all();
+        return response()->json([
+            "categorias" => $user->categories
+        ]);
     }
 
     /**

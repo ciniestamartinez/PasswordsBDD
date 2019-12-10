@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 class Category extends Model
 {
     protected $table = 'categories';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'id_user'];
 
     public function users(){
         return $this->belongsTo('App\User');
     }
 
     public function passwords(){
-        return $this->hasTo('App\Password');
+        return $this->hasMany('App\Password');
     }
 
     public function create(Request $request, $user){
